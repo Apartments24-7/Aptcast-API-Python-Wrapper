@@ -1,5 +1,8 @@
 import requests
 
+from util import join_url
+
+
 class AptcastApi(object):
     def __init__(self, **kwargs):
         self.mode = kwargs.get("mode", "live")
@@ -15,7 +18,7 @@ class AptcastApi(object):
     def post(self, app, action, params=None, headers=None, refresh_token=None):
         headers = headers or {}
         headers["Content-Type"] = "application/json"
-        headers["authorization"] = self.api_key
+        headers["Authorization"] = self.api_key
         return requests.post(
             join_url(self.api_host, app, action),
             data=params or {},
