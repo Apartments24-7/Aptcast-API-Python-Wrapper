@@ -89,37 +89,3 @@ class FloorPlan(Resource):
         }
         return self.api.post(self.app, "create/floorplan",
                              params=json.dumps(data))
-
-
-class FloorPlan(Resource):
-
-    app = "community"
-
-    def create(self, community_id, name, beds, baths, description, image_url,
-               price_low, price_high, deposit_low, deposit_high,
-               image_height=None, image_width=None):
-
-        data = {
-            "community_id": community_id,
-            "floorplan": {
-                "name": name,
-                "beds": beds,
-                "baths": baths,
-                "description": description,
-                "image": {
-                    "url": image_url,
-                    "height": image_height,
-                    "width": image_width,
-                },
-                "price": {
-                    "low": price_low,
-                    "high": price_high
-                },
-                "deposit": {
-                    "low": deposit_low,
-                    "high": deposit_high
-                },
-            }
-        }
-        return self.api.post(self.app, "create/floorplan",
-                             params=json.dumps(data))
