@@ -15,7 +15,7 @@ class Community(Resource):
                 "name": name,
                 "location": {
                     "lat": lat,
-                    "long": lng,
+                    "lng": lng,
                     "address": {
                         "address0": address,
                         "city": city,
@@ -43,6 +43,23 @@ class Community(Resource):
         }
 
 
+class HeroShot(Resource):
+
+    app = "community"
+
+    def create(self, community_id, url):
+
+        data = {
+            "community_id": community_id,
+            "hero_image": {
+                "url": url
+            }
+        }
+
+        return self.api.post(self.app, "create/hero_shot",
+                             params=json.dumps(data))
+
+
 class BaseAmenity(Resource):
 
     app = "community"
@@ -54,6 +71,25 @@ class BaseAmenity(Resource):
         }
 
         return self.api.post(self.app, "create/base_amenity",
+                             params=json.dumps(data))
+
+
+class Amenity(Resource):
+
+    app = "community"
+
+    def create(self, community_id, name, base_amenity, order):
+
+        data = {
+            "community_id": community_id,
+            "amenity": {
+                "name": name,
+                "base_amenity": base_amenity,
+                "order": order
+            }
+        }
+
+        return self.api.post(self.app, "create/amenity",
                              params=json.dumps(data))
 
 
@@ -89,3 +125,18 @@ class FloorPlan(Resource):
         }
         return self.api.post(self.app, "create/floorplan",
                              params=json.dumps(data))
+
+
+class SlideShow(Resource):
+
+    app = "community"
+
+    def create(self, community_id, name):
+
+        data = {
+            "community_id": community_id,
+            "slideshow": {
+                "name": name
+            }
+        }
+
