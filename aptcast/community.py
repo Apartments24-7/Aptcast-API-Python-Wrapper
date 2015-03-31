@@ -10,24 +10,22 @@ class Community(Resource):
     def create(self, name, description, lat, lng, address, city, state,
                postal_code, email, website, phone):
         data = {
-            "community": {
-                "description": description,
-                "name": name,
-                "location": {
-                    "lat": lat,
-                    "lng": lng,
-                    "address": {
-                        "address0": address,
-                        "city": city,
-                        "state": state,
-                        "postal_code": postal_code,
-                    }
-                },
-                "contact": {
-                    "email": email,
-                    "website": website,
-                    "phone": phone
+            "description": description,
+            "name": name,
+            "location": {
+                "lat": lat,
+                "lng": lng,
+                "address": {
+                    "address0": address,
+                    "city": city,
+                    "state": state,
+                    "postal_code": postal_code,
                 }
+            },
+            "contact": {
+                "email": email,
+                "website": website,
+                "phone": phone
             }
         }
         return self.api.post(self.app, "create",
@@ -51,9 +49,7 @@ class HeroShot(Resource):
 
         data = {
             "community_id": community_id,
-            "hero_image": {
-                "url": url
-            }
+            "url": url
         }
 
         return self.api.post(self.app, "create/hero_shot",
@@ -82,11 +78,9 @@ class Amenity(Resource):
 
         data = {
             "community_id": community_id,
-            "amenity": {
-                "name": name,
-                "base_amenity": base_amenity,
-                "order": order
-            }
+            "name": name,
+            "base_amenity": base_amenity,
+            "order": order
         }
 
         return self.api.post(self.app, "create/amenity",
