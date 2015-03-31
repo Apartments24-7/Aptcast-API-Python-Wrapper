@@ -4,7 +4,6 @@ from api import Resource
 
 
 class Community(Resource):
-
     app = "community"
 
     def create(self, name, description, lat, lng, address, city, state,
@@ -28,54 +27,47 @@ class Community(Resource):
                 "phone": phone
             }
         }
-        return self.api.post(self.app, "create",
-                             params=json.dumps(data))
+        return self.api.post(self.app, "create", params=json.dumps(data))
 
-    def update(self, name, description, lat, lng, address, city, state,
-               postal_code, email, website, phone):
-
-        data = {
-            "community": {
-
-            }
-        }
+    # def update(self, name, description, lat, lng, address, city, state,
+    #            postal_code, email, website, phone):
+    #
+    #     data = {
+    #         "community": {
+    #
+    #         }
+    #     }
 
 
 class HeroShot(Resource):
-
     app = "community"
 
     def create(self, community_id, url):
-
         data = {
             "community_id": community_id,
             "url": url
         }
 
-        return self.api.post(self.app, "create/hero_shot",
-                             params=json.dumps(data))
+        return self.api.post(
+            self.app, "create/hero_shot", params=json.dumps(data))
 
 
 class BaseAmenity(Resource):
-
     app = "community"
 
     def create(self, name):
-
         data = {
             "name": name
         }
 
-        return self.api.post(self.app, "create/base_amenity",
-                             params=json.dumps(data))
+        return self.api.post(
+            self.app, "create/base_amenity", params=json.dumps(data))
 
 
 class Amenity(Resource):
-
     app = "community"
 
     def create(self, community_id, name, base_amenity, order):
-
         data = {
             "community_id": community_id,
             "name": name,
@@ -83,12 +75,11 @@ class Amenity(Resource):
             "order": order
         }
 
-        return self.api.post(self.app, "create/amenity",
-                             params=json.dumps(data))
+        return self.api.post(
+            self.app, "create/amenity", params=json.dumps(data))
 
 
 class FloorPlan(Resource):
-
     app = "community"
 
     def create(self, community_id, name, beds, baths, description, image_url,
@@ -115,17 +106,18 @@ class FloorPlan(Resource):
                 "high": deposit_high
             }
         }
-        return self.api.post(self.app, "create/floorplan",
-                             params=json.dumps(data))
+
+        return self.api.post(
+            self.app, "create/floorplan", params=json.dumps(data))
 
 
 class Unit(Resource):
-
     app = "community"
 
     def build(self, community_id, floorplan_id, number, price_low, price_high,
               deposit_low, deposit_high, description="", building="",
               floor="", available_date=None):
+
         return {
             "community_id": community_id,
             "floorplan_id": floorplan_id,
@@ -147,10 +139,11 @@ class Unit(Resource):
     def create(self, community_id, floorplan_id, number, price_low, price_high,
                deposit_low, deposit_high, description="", building="",
                floor="", available_date=None):
-        data = self.build(community_id, floorplan_id, number, price_low,
-                          price_high, deposit_low, deposit_high,
-                          description, building, floor,
-                          available_date)
+
+        data = self.build(
+            community_id, floorplan_id, number, price_low, price_high,
+            deposit_low, deposit_high, description, building, floor,
+            available_date)
 
         return self.api.post(self.app, "create/unit", params=json.dumps(data))
 
@@ -158,20 +151,16 @@ class Unit(Resource):
         return self.api.post(
             self.app,
             "bulk-create/unit",
-            params=json.dumps(units)
-        )
+            params=json.dumps(units))
 
 
-class SlideShow(Resource):
-
-    app = "community"
-
-    def create(self, community_id, name):
-
-        data = {
-            "community_id": community_id,
-            "slideshow": {
-                "name": name
-            }
-        }
-
+# class SlideShow(Resource):
+#     app = "community"
+#
+#     def create(self, community_id, name):
+#         data = {
+#             "community_id": community_id,
+#             "slideshow": {
+#                 "name": name
+#             }
+#         }
