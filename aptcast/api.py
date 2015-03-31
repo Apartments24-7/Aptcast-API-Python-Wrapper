@@ -27,7 +27,6 @@ class AptcastApi(object):
 
 
 class Resource(object):
-
     app = None
 
     def __init__(self, api):
