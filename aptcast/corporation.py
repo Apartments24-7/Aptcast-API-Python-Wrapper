@@ -4,7 +4,6 @@ from api import Resource
 
 
 class Corporation(Resource):
-
     app = "corporation"
 
     def __init__(self, api):
@@ -12,6 +11,7 @@ class Corporation(Resource):
 
     def create(self, name, email, website, phone, address, city, state,
                postal_code):
+
         data = {
             "corporation": {
                 "name": name,
@@ -28,5 +28,5 @@ class Corporation(Resource):
                 }
             }
         }
-        return self.api.post("corporation", "create",
-                             params=json.dumps(data))
+
+        return self.api.post("corporation", "create", params=json.dumps(data))
