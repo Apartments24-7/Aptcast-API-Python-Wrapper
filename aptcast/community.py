@@ -103,24 +103,22 @@ class FloorPlan(Resource):
 
         data = {
             "community_id": community_id,
-            "floorplan": {
-                "name": name,
-                "beds": beds,
-                "baths": baths,
-                "description": description,
-                "image": {
-                    "url": image_url,
-                    "height": image_height,
-                    "width": image_width,
-                },
-                "price": {
-                    "low": price_low,
-                    "high": price_high
-                },
-                "deposit": {
-                    "low": deposit_low,
-                    "high": deposit_high
-                },
+            "name": name,
+            "beds": beds,
+            "baths": baths,
+            "description": description,
+            "image": {
+                "url": image_url,
+                "height": image_height,
+                "width": image_width,
+            },
+            "price": {
+                "low": price_low,
+                "high": price_high
+            },
+            "deposit": {
+                "low": deposit_low,
+                "high": deposit_high
             }
         }
         return self.api.post(self.app, "create/floorplan",
@@ -131,10 +129,10 @@ class Unit(Resource):
 
     app = "community"
 
-    def create(self, community_id, floorplan_id, number, price_low, price_high,
-               deposit_low, deposit_high, description="", building="",
-               floor="", available_date=None):
-        data = {
+    def build(self, community_id, floorplan_id, number, price_low, price_high,
+              deposit_low, deposit_high, description="", building="",
+              floor="", available_date=None):
+        return {
             "community_id": community_id,
             "floorplan_id": floorplan_id,
             "number": number,
@@ -152,7 +150,22 @@ class Unit(Resource):
             }
         }
 
+    def create(self, community_id, floorplan_id, number, price_low, price_high,
+               deposit_low, deposit_high, description="", building="",
+               floor="", available_date=None):
+        data = self.build(community_id, floorplan_id, number, price_low,
+                          price_high, deposit_low, deposit_high,
+                          description, building, floor,
+                          available_date)
+
         return self.api.post(self.app, "create/unit", params=json.dumps(data))
+
+    def bulk_create(self, units):
+        return self.api.post(
+            self.app,
+            "bulk-create/unit",
+            params=json.dumps(units)
+        )
 
 
 class SlideShow(Resource):
