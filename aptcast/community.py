@@ -3,9 +3,11 @@ import json
 from api import Resource
 
 
-class Community(Resource):
+class CommunityResource(Resource):
     app = "community"
 
+
+class Community(CommunityResource):
     def create(self, name, description, lat, lng, address, city, state,
                postal_code, email, website, phone):
         data = {
