@@ -41,9 +41,7 @@ class Community(CommunityResource):
     #     }
 
 
-class HeroShot(Resource):
-    app = "community"
-
+class HeroShot(CommunityResource):
     def create(self, community_id, url):
         data = {
             "community_id": community_id,
@@ -54,9 +52,7 @@ class HeroShot(Resource):
             self.app, "create/hero_shot", params=json.dumps(data))
 
 
-class BaseAmenity(Resource):
-    app = "community"
-
+class BaseAmenity(CommunityResource):
     def create(self, name):
         data = {
             "name": name
@@ -66,9 +62,7 @@ class BaseAmenity(Resource):
             self.app, "create/base_amenity", params=json.dumps(data))
 
 
-class Amenity(Resource):
-    app = "community"
-
+class Amenity(CommunityResource):
     def create(self, community_id, name, base_amenity, order):
         data = {
             "community_id": community_id,
@@ -81,9 +75,7 @@ class Amenity(Resource):
             self.app, "create/amenity", params=json.dumps(data))
 
 
-class FloorPlan(Resource):
-    app = "community"
-
+class FloorPlan(CommunityResource):
     def create(self, community_id, name, beds, baths, description, image_url,
                price_low, price_high, deposit_low, deposit_high,
                image_height=None, image_width=None):
@@ -113,9 +105,7 @@ class FloorPlan(Resource):
             self.app, "create/floorplan", params=json.dumps(data))
 
 
-class Unit(Resource):
-    app = "community"
-
+class Unit(CommunityResource):
     def build(self, community_id, floorplan_id, number, price_low, price_high,
               deposit_low, deposit_high, description="", building="",
               floor="", available_date=None):
