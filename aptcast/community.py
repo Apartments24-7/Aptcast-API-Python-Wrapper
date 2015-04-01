@@ -146,13 +146,24 @@ class Unit(CommunityResource):
             params=json.dumps(units))
 
 
-# class SlideShow(Resource):
-#     app = "community"
-#
-#     def create(self, community_id, name):
-#         data = {
-#             "community_id": community_id,
-#             "slideshow": {
-#                 "name": name
-#             }
-#         }
+class SlideShow(CommunityResource):
+    def create(self, community_id, name):
+        data = {"community_id": community_id, "name": name}
+
+        return self.api.post(
+            self.app, "create/slideshow", params=json.dumps(data))
+
+
+class SlideShowImage(CommunityResource):
+    def create(self, slideshow_id, name, url, height, width, description):
+        data = {
+            "slideshow_id": slideshow_id,
+            "name": name,
+            "url": url,
+            "height": height or None,
+            "width": width or None,
+            "description": description or ''
+        }
+
+        return self.api.post(
+            self.app, "create/slideshow/image", params=json.dumps(data))
