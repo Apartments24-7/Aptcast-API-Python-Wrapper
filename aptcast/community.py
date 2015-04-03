@@ -42,14 +42,27 @@ class Community(CommunityResource):
 
 
 class HeroShot(CommunityResource):
-    def create(self, community_id, url):
+    def create(self, community_id, url, width=None, height=None):
         data = {
             "community_id": community_id,
-            "url": url
+            "url": url,
+            "width": width,
+            "height": height
         }
 
         return self.api.post(
             self.app, "create/hero_shot", params=json.dumps(data))
+
+    def update(self, community_id, url, width=None, height=None):
+        data = {
+            "community_id": community_id,
+            "url": url,
+            "width": width,
+            "height": height
+        }
+
+        return self.api.put(
+            self.app, "update/hero_shot", params=json.dumps(data))
 
 
 class BaseAmenity(CommunityResource):
