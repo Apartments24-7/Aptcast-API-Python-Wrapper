@@ -162,6 +162,12 @@ class SlideShow(CommunityResource):
         return self.api.post(
             self.app, "create/slideshow", params=json.dumps(data))
 
+    def update(self, slideshow_id, name):
+        data = {"slideshow_id": slideshow_id, "name": name}
+
+        return self.api.put(
+            self.app, "update/slideshow", params=json.dumps(data))
+
 
 class SlideShowImage(CommunityResource):
     def create(self, slideshow_id, name, url, height, width, description):
