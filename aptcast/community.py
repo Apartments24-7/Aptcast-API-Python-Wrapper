@@ -150,6 +150,34 @@ class FloorPlan(CommunityResource):
         return self.api.post(
             self.app, "create/floorplan", params=json.dumps(data))
 
+    def update(self, floorplan_id, name, beds, baths, description, image_url,
+               price_low, price_high, deposit_low, deposit_high,
+               image_height=None, image_width=None):
+
+        data = {
+            "floorplan_id": floorplan_id,
+            "name": name,
+            "beds": beds,
+            "baths": baths,
+            "description": description,
+            "image": {
+                "url": image_url,
+                "height": image_height,
+                "width": image_width,
+            },
+            "price": {
+                "low": price_low,
+                "high": price_high
+            },
+            "deposit": {
+                "low": deposit_low,
+                "high": deposit_high
+            }
+        }
+
+        return self.api.put(
+            self.app, "update/floorplan", params=json.dumps(data))
+
 
 class Unit(CommunityResource):
     def build(self, community_id, floorplan_id, number, price_low, price_high,
