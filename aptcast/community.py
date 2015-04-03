@@ -61,6 +61,15 @@ class BaseAmenity(CommunityResource):
         return self.api.post(
             self.app, "create/base_amenity", params=json.dumps(data))
 
+    def update(self, amenity_id, name):
+        data = {
+            'amenity_id': amenity_id,
+            'name': name
+        }
+
+        return self.api.put(
+            self.app, "update/base_amenity", params=json.dumps(data))
+
 
 class Amenity(CommunityResource):
     def create(self, community_id, name, base_amenity, order):
