@@ -4,6 +4,8 @@ from util import join_url
 
 
 class AptcastApi(object):
+    content_type = "application/json"
+
     def __init__(self, **kwargs):
         self.mode = kwargs.get("mode", "live")
         self.api_host = kwargs.get("api_host", self.default_api_host())
@@ -17,13 +19,20 @@ class AptcastApi(object):
 
     def post(self, app, action, params=None, headers=None, refresh_token=None):
         headers = headers or {}
-        headers["Content-Type"] = "application/json"
+        headers["Content-Type"] = self.content_type
         headers["Authorization"] = self.api_key
         return requests.post(
-            join_url(self.api_host, app, action),
-            data=params or {},
-            headers=headers
-        ).json()
+            join_url(self.api_host, app, action), data=params or {},
+            headers=headers).json()
+
+    def put(self, app, action, params=None, headers=None, refresh_token=None):
+        headers = headers or {}
+        headers["Content-Type"] = self.content_type
+        headers["Authorization"] = self.api_key
+
+        return requests.put(
+            join_url(self.api_host, app, action), data=params or {},
+            headers=headers).json()
 
 
 class Resource(object):
