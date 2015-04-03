@@ -65,6 +65,30 @@ class HeroShot(CommunityResource):
             self.app, "update/hero_shot", params=json.dumps(data))
 
 
+class LogoImage(CommunityResource):
+    def create(self, community_id, url, width=None, height=None):
+        data = {
+            "community_id": community_id,
+            "url": url,
+            "width": width,
+            "height": height
+        }
+
+        return self.api.post(
+            self.app, "create/logo", params=json.dumps(data))
+
+    def update(self, community_id, url, width=None, height=None):
+        data = {
+            "community_id": community_id,
+            "url": url,
+            "width": width,
+            "height": height
+        }
+
+        return self.api.put(
+            self.app, "update/logo", params=json.dumps(data))
+
+
 class BaseAmenity(CommunityResource):
     def create(self, name):
         data = {
