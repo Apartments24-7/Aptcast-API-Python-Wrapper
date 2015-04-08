@@ -103,21 +103,22 @@ class LogoImage(CommunityResource):
 
 class BaseAmenity(CommunityResource):
     def create(self, name):
-        data = {
-            "name": name
-        }
+        data = {"name": name}
 
         return self.api.post(
             self.app, "create/base_amenity", params=json.dumps(data))
 
     def update(self, amenity_id, name):
-        data = {
-            'amenity_id': amenity_id,
-            'name': name
-        }
+        data = {'amenity_id': amenity_id, 'name': name}
 
         return self.api.put(
             self.app, "update/base_amenity", params=json.dumps(data))
+
+    def delete(self, amenity_id):
+        data = {'amenity_id': amenity_id}
+
+        return self.api.delete(
+            self.app, "delete/base_amenity", params=json.dumps(data))
 
 
 class Amenity(CommunityResource):
