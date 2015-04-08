@@ -201,6 +201,12 @@ class FloorPlan(CommunityResource):
         return self.api.put(
             self.app, "update/floorplan", params=json.dumps(data))
 
+    def delete(self, floorplan_id):
+        data = {"floorplan_id": floorplan_id}
+
+        return self.api.delete(
+            self.app, "delete/floorplan", params=json.dumps(data))
+
 
 class Unit(CommunityResource):
     def build(self, community_id, floorplan_id, number, price_low, price_high,
