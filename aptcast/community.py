@@ -279,6 +279,12 @@ class SlideShow(CommunityResource):
         return self.api.put(
             self.app, "update/slideshow", params=json.dumps(data))
 
+    def delete(self, slideshow_id):
+        data = {"slideshow_id": slideshow_id}
+
+        return self.api.delete(
+            self.app, "delete/slideshow", params=json.dumps(data))
+
 
 class SlideShowImage(CommunityResource):
     def create(self, slideshow_id, name, url, height, width, description):
