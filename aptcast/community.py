@@ -94,6 +94,12 @@ class LogoImage(CommunityResource):
         return self.api.put(
             self.app, "update/logo", params=json.dumps(data))
 
+    def delete(self, community_id):
+        data = {"community_id": community_id}
+
+        return self.api.delete(
+            self.app, "delete/logo", params=json.dumps(data))
+
 
 class BaseAmenity(CommunityResource):
     def create(self, name):
