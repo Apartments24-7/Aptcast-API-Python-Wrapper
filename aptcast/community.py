@@ -224,6 +224,17 @@ class Unit(CommunityResource):
 
         return self.api.post(self.app, "create/unit", params=json.dumps(data))
 
+    def update(self, community_id, floorplan_id, number, price_low, price_high,
+               deposit_low, deposit_high, description="", building="",
+               floor="", available_date=None):
+
+        data = self.build(
+            community_id, floorplan_id, number, price_low, price_high,
+            deposit_low, deposit_high, description, building, floor,
+            available_date)
+
+        return self.api.put(self.app, "update/unit", params=json.dumps(data))
+
     def bulk_create(self, units):
         return self.api.post(
             self.app,
