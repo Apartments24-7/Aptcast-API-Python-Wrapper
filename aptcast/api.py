@@ -34,6 +34,16 @@ class AptcastApi(object):
             join_url(self.api_host, app, action), data=params or {},
             headers=headers).json()
 
+    def delete(self, app, action, params=None, headers=None,
+               refresh_token=None):
+        headers = headers or {}
+        headers["Content-Type"] = self.content_type
+        headers["Authorization"] = self.api_key
+
+        return requests.delete(
+            join_url(self.api_host, app, action), data=params or {},
+            headers=headers).json()
+
 
 class Resource(object):
     app = None
