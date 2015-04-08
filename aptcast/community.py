@@ -259,6 +259,12 @@ class Unit(CommunityResource):
             "bulk-create/unit",
             params=json.dumps(units))
 
+    def delete(self, unit_id):
+        data = {"unit_id": unit_id}
+
+        return self.api.delete(
+            self.app, "delete/unit", params=json.dumps(data))
+
 
 class SlideShow(CommunityResource):
     def create(self, community_id, name):
