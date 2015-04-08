@@ -64,6 +64,12 @@ class HeroShot(CommunityResource):
         return self.api.put(
             self.app, "update/hero_shot", params=json.dumps(data))
 
+    def delete(self, community_id):
+        data = {"community_id": community_id}
+
+        return self.api.delete(
+            self.app, "delete/hero_shot", params=json.dumps(data))
+
 
 class LogoImage(CommunityResource):
     def create(self, community_id, url, width=None, height=None):
