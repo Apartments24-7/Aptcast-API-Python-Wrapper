@@ -123,6 +123,7 @@ class BaseAmenity(CommunityResource):
 
 class Amenity(CommunityResource):
     def create(self, community_id, name, base_amenity, order):
+        """ Create amenity """
         data = {
             "community_id": community_id,
             "name": name,
@@ -134,6 +135,7 @@ class Amenity(CommunityResource):
             self.app, "create/amenity", params=json.dumps(data))
 
     def update(self, community_id, name, base_amenity, order):
+        """ Update amenity """
         data = {
             "community_id": community_id,
             "name": name,
@@ -143,6 +145,20 @@ class Amenity(CommunityResource):
 
         return self.api.put(
             self.app, "update/amenity", params=json.dumps(data))
+
+    def delete(self, amenity_id):
+        """ Delete a single amenity """
+        data = {"amenity_id": amenity_id}
+
+        return self.api.delete(
+            self.app, "delete/amenity", params=json.dumps(data))
+
+    def delete_all(self, community_id):
+        """ Delete all amenities for a community """
+        data = {"community_id": community_id}
+
+        return self.api.delete(
+            self.app, "bulk-delete/amenity", params=json.dumps(data))
 
 
 class FloorPlan(CommunityResource):
