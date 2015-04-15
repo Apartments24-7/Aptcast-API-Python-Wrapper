@@ -9,7 +9,7 @@ class CommunityResource(Resource):
 
 class Community(CommunityResource):
     def create(self, name, description, lat, lng, address, city, state,
-               postal_code, email, website, phone):
+               postal_code, email, website, phone, cats, dogs, pet_policy):
         data = {
             "description": description,
             "name": name,
@@ -27,6 +27,11 @@ class Community(CommunityResource):
                 "email": email,
                 "website": website,
                 "phone": phone
+            },
+            "pet_policy": {
+                "cats": cats,
+                "dogs": dogs,
+                "details": pet_policy or ""
             }
         }
         return self.api.post(self.app, "create", params=json.dumps(data))
