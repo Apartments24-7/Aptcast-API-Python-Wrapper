@@ -36,14 +36,36 @@ class Community(CommunityResource):
         }
         return self.api.post(self.app, "create", params=json.dumps(data))
 
-    # def update(self, name, description, lat, lng, address, city, state,
-    #            postal_code, email, website, phone):
-    #
-    #     data = {
-    #         "community": {
-    #
-    #         }
-    #     }
+    def update(self, aptcast_id, name, description, lat, lng, address, city,
+               state, postal_code, email, website, phone, cats, dogs,
+               pet_policy):
+        data = {
+            "community_id": aptcast_id,
+            "description": description,
+            "name": name,
+            "location": {
+                "lat": lat,
+                "lng": lng,
+                "address": {
+                    "address0": address,
+                    "city": city,
+                    "state": state,
+                    "postal_code": postal_code,
+                }
+            },
+            "contact": {
+                "email": email,
+                "website": website,
+                "phone": phone
+            },
+            "pet_policy": {
+                "cats": cats,
+                "dogs": dogs,
+                "details": pet_policy or ""
+            }
+        }
+
+        return self.api.put(self.app, "update", params=json.dumps(data))
 
 
 class HeroShot(CommunityResource):
