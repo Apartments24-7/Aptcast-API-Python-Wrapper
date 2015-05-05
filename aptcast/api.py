@@ -1,3 +1,5 @@
+import json
+
 import requests
 
 from util import join_url
@@ -42,9 +44,11 @@ class AptcastApi(object):
                refresh_token=None):
         headers = self._set_headers(headers)
 
-        return requests.delete(join_url(
+        response = requests.delete(join_url(
             self.api_host, self.api_base_path, app,
-            action), data=params or {}, headers=headers).json()
+            action), data=params or {}, headers=headers)
+
+        return json.dumps({"status_code": response.status_code})
 
 
 class Resource(object):
