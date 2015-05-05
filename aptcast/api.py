@@ -27,24 +27,24 @@ class AptcastApi(object):
     def post(self, app, action, params=None, headers=None, refresh_token=None):
         headers = self._set_headers(headers)
 
-        return requests.post(
-            join_url(self.api_host, app, action), data=params or {},
-            headers=headers).json()
+        return requests.post(join_url(
+            self.api_host, self.api_base_path, app,
+            action), data=params or {}, headers=headers).json()
 
     def put(self, app, action, params=None, headers=None, refresh_token=None):
         headers = self._set_headers(headers)
 
-        return requests.put(
-            join_url(self.api_host, app, action), data=params or {},
-            headers=headers).json()
+        return requests.put(join_url(
+            self.api_host, self.api_base_path, app,
+            action), data=params or {}, headers=headers).json()
 
     def delete(self, app, action, params=None, headers=None,
                refresh_token=None):
         headers = self._set_headers(headers)
 
-        return requests.delete(
-            join_url(self.api_host, app, action), data=params or {},
-            headers=headers).json()
+        return requests.delete(join_url(
+            self.api_host, self.api_base_path, app,
+            action), data=params or {}, headers=headers).json()
 
 
 class Resource(object):
