@@ -49,6 +49,23 @@ class AptcastApi(object):
 
 class Resource(object):
     app = None
+    action = None
 
     def __init__(self, api):
         self.api = api
+
+    def get_app(self):
+        if self.app is None:
+            raise AttributeError(
+                '{0} is missing the "app" property. Define {0}.app.'.format(
+                    self.__class__.__name__))
+
+        return self.app
+
+    def get_action(self):
+        if self.action is None:
+            raise AttributeError(
+                '{0} is missing the "action" property. '
+                'Define {0}.action.'.format(self.__class__.__name__))
+
+        return self.action
