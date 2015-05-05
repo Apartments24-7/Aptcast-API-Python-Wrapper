@@ -25,7 +25,14 @@ class AptcastApi(object):
         headers = headers or {}
         headers["Content-Type"] = self.content_type
         headers["Authorization"] = self.api_key
+
+        if self.corporation_id is not None:
+            headers["X-Corporation-Id"] = self.corporation_id
+
         return headers
+
+    def set_corporation_id_header(self, corporation_id):
+        self.corporation_id = corporation_id
 
     def post(self, app, action, params=None, headers=None, refresh_token=None):
         headers = self._set_headers(headers)
