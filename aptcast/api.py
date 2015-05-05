@@ -13,6 +13,7 @@ class AptcastApi(object):
         self.api_host = kwargs.get("api_host", self.default_api_host())
         self.api_base_path = kwargs.get("api_base_path", "/api/v1/")
         self.api_key = kwargs.get("api_key")
+        self.corporation_id = None
 
     def default_api_host(self):
         if self.mode == "live":
