@@ -15,20 +15,23 @@ class AptcastApi(object):
         if self.mode == "live":
             return "https://api.aptcast.com"
         else:
-            return "http://localhost:3000"
+            return "http://localhost:8080"
 
-    def post(self, app, action, params=None, headers=None, refresh_token=None):
+    def _set_headers(self, headers=None):
         headers = headers or {}
         headers["Content-Type"] = self.content_type
         headers["Authorization"] = self.api_key
+        return headers
+
+    def post(self, app, action, params=None, headers=None, refresh_token=None):
+        headers = self._set_headers(headers)
+
         return requests.post(
             join_url(self.api_host, app, action), data=params or {},
             headers=headers).json()
 
     def put(self, app, action, params=None, headers=None, refresh_token=None):
-        headers = headers or {}
-        headers["Content-Type"] = self.content_type
-        headers["Authorization"] = self.api_key
+        headers = self._set_headers(headers)
 
         return requests.put(
             join_url(self.api_host, app, action), data=params or {},
@@ -36,9 +39,7 @@ class AptcastApi(object):
 
     def delete(self, app, action, params=None, headers=None,
                refresh_token=None):
-        headers = headers or {}
-        headers["Content-Type"] = self.content_type
-        headers["Authorization"] = self.api_key
+        headers = self._set_headers(headers)
 
         return requests.delete(
             join_url(self.api_host, app, action), data=params or {},
