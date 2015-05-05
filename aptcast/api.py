@@ -9,6 +9,7 @@ class AptcastApi(object):
     def __init__(self, **kwargs):
         self.mode = kwargs.get("mode", "live")
         self.api_host = kwargs.get("api_host", self.default_api_host())
+        self.api_base_path = kwargs.get("api_base_path", "/api/v1/")
         self.api_key = kwargs.get("api_key")
 
     def default_api_host(self):
