@@ -4,8 +4,8 @@ from api import Resource
 
 
 class Corporation(Resource):
-    base_action = "corp"
     app = "corporation"
+    base_action = "corp"
 
     def create(self, name, address0, address1, city, state, postal_code,
                email, website, phone):
