@@ -11,11 +11,10 @@ class Corporation(Resource):
         self.api = api
 
     def create(self, name, address0, address1, city, state, postal_code,
-               email, website, phone, parent):
+               email, website, phone):
         self.action = self.base_action
         data = {
             "name": name,
-            "parent": parent,
             "contact": {
                 "email": email,
                 "website": website,
