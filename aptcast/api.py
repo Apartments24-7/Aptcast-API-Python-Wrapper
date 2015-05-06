@@ -32,6 +32,10 @@ class AptcastApi(object):
         return headers
 
     def set_corporation_id_header(self, corporation_id):
+        """
+        Main purpose is to set this id when using the super duper
+        API key to act on behalf of a corporation.
+        """
         self.corporation_id = corporation_id
 
     def post(self, app, action, params=None, headers=None, refresh_token=None):
