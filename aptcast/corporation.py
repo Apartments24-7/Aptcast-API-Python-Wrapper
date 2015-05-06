@@ -7,9 +7,6 @@ class Corporation(Resource):
     base_action = "corp"
     app = "corporation"
 
-    def __init__(self, api):
-        self.api = api
-
     def create(self, name, address0, address1, city, state, postal_code,
                email, website, phone):
         self.action = self.base_action
