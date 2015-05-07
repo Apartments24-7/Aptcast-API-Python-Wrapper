@@ -197,36 +197,39 @@ class SlideshowResource(Resource):
         return self.api.delete(self.get_app(), self.get_action())
 
 
-# class SlideShowImage(Resource):
-#     def create(self, slideshow_id, name, url, height, width, description):
-#         data = {
-#             "slideshow_id": slideshow_id,
-#             "name": name,
-#             "url": url,
-#             "height": height or None,
-#             "width": width or None,
-#             "description": description or ''
-#         }
-#
-#         return self.api.post(
-#             self.app, "create/slideshow/image", params=json.dumps(data))
-#
-#     def update(self, slideshow_image_id, name, url, height, width,
-#                description):
-#         data = {
-#             "slideshow_image_id": slideshow_image_id,
-#             "name": name,
-#             "url": url,
-#             "height": height,
-#             "width": width,
-#             "description": description
-#         }
-#
-#         return self.api.put(
-#             self.app, "update/slideshow/image", params=json.dumps(data))
-#
-#     def delete(self, slideshow_image_id):
-#         data = {"slideshow_image_id": slideshow_image_id}
-#
-#         return self.api.delete(
-#             self.app, "delete/slideshow/image", params=json.dumps(data))
+class SlideshowImageResource(Resource):
+    app = "community"
+    base_action = "slideshow"
+    extra_action = "images"
+
+    def create(self, slideshow_aptcast_id, name, description, image):
+        self.action = "{0}/{1}/{2}".format(
+            self.base_action, slideshow_aptcast_id, self.extra_action)
+
+        data = {
+            "name": name or None,
+            "description": description or None
+        }
+        files = {"image": image}
+
+        return self.api.post(
+            self.get_app(), self.get_action(), params=data, files=files)
+
+    def update(self, slideshow_aptcast_id, aptcast_id, **kwargs):
+        self.action = "{0}/{1}/{2}/{3}".format(
+            self.base_action, slideshow_aptcast_id, self.extra_action,
+            aptcast_id)
+
+        files = {}
+        if kwargs.get("image"):
+            files.update({"image": kwargs.pop("image")})
+
+        return self.api.patch(
+            self.get_app(), self.get_action(), params=kwargs, files=files)
+
+    def delete(self, slideshow_aptcast_id, aptcast_id):
+        self.action = "{0}/{1}/{2}/{3}".format(
+            self.base_action, slideshow_aptcast_id, self.extra_action,
+            aptcast_id)
+
+        return self.api.delete(self.get_app(), self.get_action())
