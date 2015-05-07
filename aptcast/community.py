@@ -172,26 +172,31 @@ class UnitResource(Resource):
 
         return self.api.delete(self.get_app(), self.get_action())
 
-# class SlideShow(Resource):
-#     def create(self, community_id, name):
-#         data = {"community_id": community_id, "name": name}
-#
-#         return self.api.post(
-#             self.app, "create/slideshow", params=json.dumps(data))
-#
-#     def update(self, slideshow_id, name):
-#         data = {"slideshow_id": slideshow_id, "name": name}
-#
-#         return self.api.put(
-#             self.app, "update/slideshow", params=json.dumps(data))
-#
-#     def delete(self, slideshow_id):
-#         data = {"slideshow_id": slideshow_id}
-#
-#         return self.api.delete(
-#             self.app, "delete/slideshow", params=json.dumps(data))
-#
-#
+
+class SlideshowResource(Resource):
+    app = "community"
+    base_action = "slideshow"
+
+    def create(self, community_aptcast_id, name):
+        self.action = "{0}/{1}".format(community_aptcast_id, self.base_action)
+        data = {"name": name}
+
+        return self.api.post(self.get_app(), self.get_action(), params=data)
+
+    def update(self, community_aptcast_id, aptcast_id, **kwargs):
+        self.action = "{0}/{1}/{2}".format(
+            community_aptcast_id, self.base_action, aptcast_id)
+
+        return self.api.patch(
+            self.get_app(), self.get_action(), params=kwargs)
+
+    def delete(self, community_aptcast_id, aptcast_id):
+        self.action = "{0}/{1}/{2}".format(
+            community_aptcast_id, self.base_action, aptcast_id)
+
+        return self.api.delete(self.get_app(), self.get_action())
+
+
 # class SlideShowImage(Resource):
 #     def create(self, slideshow_id, name, url, height, width, description):
 #         data = {
