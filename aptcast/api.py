@@ -51,6 +51,15 @@ class AptcastApi(object):
             self.api_host, self.api_base_path, app,
             action), data=params or {}, headers=headers).json()
 
+    def patch(self, app, action, params=None, files=None, headers=None,
+              refresh_token=None):
+        headers = self._set_headers(headers)
+
+        return requests.patch(join_url(
+            self.api_host, self.api_base_path, app,
+            action), data=params or {}, files=files or {},
+            headers=headers).json()
+
     def delete(self, app, action, params=None, headers=None,
                refresh_token=None):
         headers = self._set_headers(headers)
