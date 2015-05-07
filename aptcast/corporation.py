@@ -1,7 +1,7 @@
 from api import Resource
 
 
-class Corporation(Resource):
+class CorporationResource(Resource):
     app = "corporation"
     base_action = "corp"
 
