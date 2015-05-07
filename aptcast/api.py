@@ -23,7 +23,6 @@ class AptcastApi(object):
 
     def _set_headers(self, headers=None):
         headers = headers or {}
-        headers["Content-Type"] = self.content_type
         headers["Authorization"] = self.api_key
 
         if self.corporation_id is not None:
