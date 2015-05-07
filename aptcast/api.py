@@ -6,8 +6,6 @@ from util import join_url
 
 
 class AptcastApi(object):
-    content_type = "application/json"
-
     def __init__(self, **kwargs):
         self.mode = kwargs.get("mode", "live")
         self.api_host = kwargs.get("api_host", self.default_api_host())
