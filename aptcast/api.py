@@ -35,12 +35,14 @@ class AptcastApi(object):
         """
         self.corporation_id = corporation_id
 
-    def post(self, app, action, params=None, headers=None, refresh_token=None):
+    def post(self, app, action, params=None, files=None, headers=None,
+             refresh_token=None):
         headers = self._set_headers(headers)
 
         return requests.post(join_url(
             self.api_host, self.api_base_path, app,
-            action), data=params or {}, headers=headers).json()
+            action), data=params or {}, files=files or {},
+            headers=headers).json()
 
     def put(self, app, action, params=None, headers=None, refresh_token=None):
         headers = self._set_headers(headers)
