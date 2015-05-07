@@ -1,365 +1,227 @@
-import json
-
 from api import Resource
 
 
 class CommunityResource(Resource):
     app = "community"
+    base_action = "communities"
 
+    def create(self, name, address0, address1, city, state, postal_code, email,
+               website, phone, pet_policy_details, dogs, cats, senior,
+               section8, student, corporate, military, corporation,
+               description, location, logo_description, hero_shot_description,
+               logo, hero_shot):
+        self.action = self.base_action
 
-class Community(CommunityResource):
-    def create(self, name, description, lat, lng, address, city, state,
-               postal_code, email, website, phone, cats, dogs, pet_policy):
         data = {
-            "description": description,
             "name": name,
-            "location": {
-                "lat": lat,
-                "lng": lng,
-                "address": {
-                    "address0": address,
-                    "city": city,
-                    "state": state,
-                    "postal_code": postal_code,
-                }
-            },
-            "contact": {
-                "email": email,
-                "website": website,
-                "phone": phone
-            },
-            "pet_policy": {
-                "cats": cats,
-                "dogs": dogs,
-                "details": pet_policy or ""
-            }
-        }
-        return self.api.post(self.app, "create", params=json.dumps(data))
-
-    def update(self, aptcast_id, name, description, lat, lng, address, city,
-               state, postal_code, email, website, phone, cats, dogs,
-               pet_policy):
-        data = {
-            "community_id": aptcast_id,
-            "description": description,
-            "name": name,
-            "location": {
-                "lat": lat,
-                "lng": lng,
-                "address": {
-                    "address0": address,
-                    "city": city,
-                    "state": state,
-                    "postal_code": postal_code,
-                }
-            },
-            "contact": {
-                "email": email,
-                "website": website,
-                "phone": phone
-            },
-            "pet_policy": {
-                "cats": cats,
-                "dogs": dogs,
-                "details": pet_policy or ""
-            }
+            "address0": address0,
+            "address1": address1 or None,
+            "city": city,
+            "state": state,
+            "postal_code": postal_code,
+            "email": email or None,
+            "website": website or None,
+            "phone": phone,
+            "pet_policy_details": pet_policy_details or None,
+            "dogs": dogs or False,
+            "cats": cats or False,
+            "senior": senior or False,
+            "section8": section8 or False,
+            "student": student or False,
+            "corporate": corporate or False,
+            "military": military or False,
+            "corporation": corporation,
+            "description": description or None,
+            "location": location,
+            "logo_description": logo_description or None,
+            "hero_shot_description": hero_shot_description or None
         }
 
-        return self.api.put(self.app, "update", params=json.dumps(data))
-
-
-class HeroShot(CommunityResource):
-    def create(self, community_id, url, width=None, height=None):
-        data = {
-            "community_id": community_id,
-            "url": url,
-            "width": width,
-            "height": height
-        }
+        files = {}
+        if any([logo, hero_shot]):
+            if logo:
+                files.update({"logo": logo})
+            if hero_shot:
+                files.update({"hero_shot": hero_shot})
 
         return self.api.post(
-            self.app, "create/hero_shot", params=json.dumps(data))
+            self.get_app(), self.get_action(), params=data, files=files)
 
-    def update(self, community_id, url, width=None, height=None):
+    def update(self, aptcast_id, **kwargs):
+        self.action = "{0}/{1}".format(self.base_action, aptcast_id)
+        files = {}
+
+        if kwargs.get("logo"):
+            files.update({"logo": kwargs.pop("logo")})
+        if kwargs.get("hero_shot"):
+            files.update({"hero_shot": kwargs.pop("hero_shot")})
+
+        return self.api.patch(
+            self.get_app(), self.get_action(), params=kwargs, files=files)
+
+
+class CommunityAmenityResource(Resource):
+    app = "community"
+    base_action = "amenities"
+
+    def create(self, community_aptcast_id, name, order, base):
+        self.action = self.base_action
         data = {
-            "community_id": community_id,
-            "url": url,
-            "width": width,
-            "height": height
+            "name": name or None,
+            "order": order,
+            "base": base,
+            "community": community_aptcast_id
         }
 
-        return self.api.put(
-            self.app, "update/hero_shot", params=json.dumps(data))
+        return self.api.post(self.get_app(), self.get_action(), params=data)
 
-    def delete(self, community_id):
-        data = {"community_id": community_id}
+    def update(self, aptcast_id, **kwargs):
+        self.action = "{0}/{1}".format(self.base_action, aptcast_id)
+        return self.api.patch(self.get_app(), self.get_action(), params=kwargs)
 
-        return self.api.delete(
-            self.app, "delete/hero_shot", params=json.dumps(data))
-
-
-class LogoImage(CommunityResource):
-    def create(self, community_id, url, width=None, height=None):
-        data = {
-            "community_id": community_id,
-            "url": url,
-            "width": width,
-            "height": height
-        }
-
-        return self.api.post(
-            self.app, "create/logo", params=json.dumps(data))
-
-    def update(self, community_id, url, width=None, height=None):
-        data = {
-            "community_id": community_id,
-            "url": url,
-            "width": width,
-            "height": height
-        }
-
-        return self.api.put(
-            self.app, "update/logo", params=json.dumps(data))
-
-    def delete(self, community_id):
-        data = {"community_id": community_id}
-
-        return self.api.delete(
-            self.app, "delete/logo", params=json.dumps(data))
+    def delete(self, aptcast_id):
+        self.action = "{0}/{1}".format(self.base_action, aptcast_id)
+        return self.api.delete(self.get_app(), self.get_action())
 
 
-class BaseAmenity(CommunityResource):
-    def create(self, name):
-        data = {"name": name}
+class FloorPlanResource(Resource):
+    app = "community"
+    base_action = "floor-plans"
 
-        return self.api.post(
-            self.app, "create/base_amenity", params=json.dumps(data))
-
-    def update(self, amenity_id, name):
-        data = {'amenity_id': amenity_id, 'name': name}
-
-        return self.api.put(
-            self.app, "update/base_amenity", params=json.dumps(data))
-
-    def delete(self, amenity_id):
-        data = {'amenity_id': amenity_id}
-
-        return self.api.delete(
-            self.app, "delete/base_amenity", params=json.dumps(data))
-
-
-class Amenity(CommunityResource):
-    def create(self, community_id, name, base_amenity, order):
-        """ Create amenity """
-        data = {
-            "community_id": community_id,
-            "name": name,
-            "base_amenity": base_amenity,
-            "order": order
-        }
-
-        return self.api.post(
-            self.app, "create/amenity", params=json.dumps(data))
-
-    def update(self, community_id, name, base_amenity, order):
-        """ Update amenity """
-        data = {
-            "community_id": community_id,
-            "name": name,
-            "base_amenity": base_amenity,
-            "order": order
-        }
-
-        return self.api.put(
-            self.app, "update/amenity", params=json.dumps(data))
-
-    def delete(self, amenity_id):
-        """ Delete a single amenity """
-        data = {"amenity_id": amenity_id}
-
-        return self.api.delete(
-            self.app, "delete/amenity", params=json.dumps(data))
-
-    def delete_all(self, community_id):
-        """ Delete all amenities for a community """
-        data = {"community_id": community_id}
-
-        return self.api.delete(
-            self.app, "bulk-delete/amenity", params=json.dumps(data))
-
-
-class FloorPlan(CommunityResource):
-    def create(self, community_id, name, beds, baths, description, image_url,
-               price_low, price_high, deposit_low, deposit_high,
-               image_height=None, image_width=None):
+    def create(self, community_aptcast_id, beds, baths, name, is_loft,
+               is_studio, description, image, image_description, rent_low,
+               rent_high, deposit_low, deposit_high, square_feet_low,
+               square_feet_hight):
+        self.action = "{0}/{1}".format(community_aptcast_id, self.base_action)
 
         data = {
-            "community_id": community_id,
-            "name": name,
             "beds": beds,
             "baths": baths,
-            "description": description,
-            "image": {
-                "url": image_url,
-                "height": image_height,
-                "width": image_width,
-            },
-            "price": {
-                "low": price_low,
-                "high": price_high
-            },
-            "deposit": {
-                "low": deposit_low,
-                "high": deposit_high
-            }
+            "name": name,
+            "is_loft": is_loft or False,
+            "is_studio": is_studio or False,
+            "description": description or None,
+            "image_description": image_description or None,
+            "rent_low": rent_low,
+            "rent_high": rent_high or None,
+            "deposit_low": deposit_low,
+            "deposit_high": deposit_high or None,
+            "square_feet_low": square_feet_low,
+            "square_feet_hight": square_feet_hight or None
         }
 
-        return self.api.post(
-            self.app, "create/floorplan", params=json.dumps(data))
+        files = {}
+        if image:
+            files.update({"image": image})
 
-    def update(self, floorplan_id, name, beds, baths, description, image_url,
-               price_low, price_high, deposit_low, deposit_high,
-               image_height=None, image_width=None):
+        return self.api.post(
+            self.get_app(), self.get_action(), params=data, files=files)
+
+    def update(self, community_aptcast_id, aptcast_id, **kwargs):
+        self.action = "{0}/{1}/{2}".format(
+            community_aptcast_id, self.base_action, aptcast_id)
+        files = {}
+
+        if kwargs.get("image"):
+            files.update({"image": kwargs.pop("image")})
+
+        return self.api.patch(
+            self.get_app(), self.get_action(), params=kwargs, files=files)
+
+    def delete(self, community_aptcast_id, aptcast_id):
+        self.action = "{0}/{1}/{2}".format(
+            community_aptcast_id, self.base_action, aptcast_id)
+
+        return self.api.delete(self.get_app(), self.get_action())
+
+
+class UnitResource(Resource):
+    app = "community"
+    base_action = "units"
+
+    def create(self, floor_plan_aptcast_id, number, building, floor,
+               available_date, description, rent_low, rent_high, deposit_low,
+               deposit_high, square_feet_low, square_feet_hight):
+        self.action = "{0}/{1}".format(floor_plan_aptcast_id, self.base_action)
 
         data = {
-            "floorplan_id": floorplan_id,
-            "name": name,
-            "beds": beds,
-            "baths": baths,
-            "description": description,
-            "image": {
-                "url": image_url,
-                "height": image_height,
-                "width": image_width,
-            },
-            "price": {
-                "low": price_low,
-                "high": price_high
-            },
-            "deposit": {
-                "low": deposit_low,
-                "high": deposit_high
-            }
+            "number": number or None,
+            "building": building or None,
+            "floor": floor or None,
+            "available_date": available_date or None,
+            "description": description or None,
+            "rent_low": rent_low,
+            "rent_high": rent_high or None,
+            "deposit_low": deposit_low or None,
+            "deposit_high": deposit_high or None,
+            "square_feet_low": square_feet_low,
+            "square_feet_hight": square_feet_hight or None
         }
 
-        return self.api.put(
-            self.app, "update/floorplan", params=json.dumps(data))
+        return self.api.post(self.get_app(), self.get_action(), params=data)
 
-    def delete(self, floorplan_id):
-        data = {"floorplan_id": floorplan_id}
+    def update(self, floor_plan_aptcast_id, aptcast_id, **kwargs):
+        self.action = "{0}/{1}/{2}".format(
+            floor_plan_aptcast_id, self.base_action, aptcast_id)
 
-        return self.api.delete(
-            self.app, "delete/floorplan", params=json.dumps(data))
+        return self.api.patch(self.get_app(), self.get_action(), params=kwargs)
 
+    def delete(self, floor_plan_aptcast_id, aptcast_id):
+        self.action = "{0}/{1}/{2}".format(
+            floor_plan_aptcast_id, self.base_action, aptcast_id)
 
-class Unit(CommunityResource):
-    def build(self, community_id, floorplan_id, number, price_low, price_high,
-              deposit_low, deposit_high, description="", building="",
-              floor="", available_date=None):
+        return self.api.delete(self.get_app(), self.get_action())
 
-        return {
-            "community_id": community_id,
-            "floorplan_id": floorplan_id,
-            "number": number,
-            "building": building,
-            "floor": floor,
-            "available_date": available_date,
-            "description": description,
-            "price": {
-                "low": price_low,
-                "high": price_high
-            },
-            "deposit": {
-                "low": deposit_low,
-                "high": deposit_high
-            }
-        }
-
-    def create(self, community_id, floorplan_id, number, price_low, price_high,
-               deposit_low, deposit_high, description="", building="",
-               floor="", available_date=None):
-
-        data = self.build(
-            community_id, floorplan_id, number, price_low, price_high,
-            deposit_low, deposit_high, description, building, floor,
-            available_date)
-
-        return self.api.post(self.app, "create/unit", params=json.dumps(data))
-
-    def update(self, community_id, floorplan_id, number, price_low, price_high,
-               deposit_low, deposit_high, description="", building="",
-               floor="", available_date=None):
-
-        data = self.build(
-            community_id, floorplan_id, number, price_low, price_high,
-            deposit_low, deposit_high, description, building, floor,
-            available_date)
-
-        return self.api.put(self.app, "update/unit", params=json.dumps(data))
-
-    def bulk_create(self, units):
-        return self.api.post(
-            self.app,
-            "bulk-create/unit",
-            params=json.dumps(units))
-
-    def delete(self, unit_id):
-        data = {"unit_id": unit_id}
-
-        return self.api.delete(
-            self.app, "delete/unit", params=json.dumps(data))
-
-
-class SlideShow(CommunityResource):
-    def create(self, community_id, name):
-        data = {"community_id": community_id, "name": name}
-
-        return self.api.post(
-            self.app, "create/slideshow", params=json.dumps(data))
-
-    def update(self, slideshow_id, name):
-        data = {"slideshow_id": slideshow_id, "name": name}
-
-        return self.api.put(
-            self.app, "update/slideshow", params=json.dumps(data))
-
-    def delete(self, slideshow_id):
-        data = {"slideshow_id": slideshow_id}
-
-        return self.api.delete(
-            self.app, "delete/slideshow", params=json.dumps(data))
-
-
-class SlideShowImage(CommunityResource):
-    def create(self, slideshow_id, name, url, height, width, description):
-        data = {
-            "slideshow_id": slideshow_id,
-            "name": name,
-            "url": url,
-            "height": height or None,
-            "width": width or None,
-            "description": description or ''
-        }
-
-        return self.api.post(
-            self.app, "create/slideshow/image", params=json.dumps(data))
-
-    def update(self, slideshow_image_id, name, url, height, width,
-               description):
-        data = {
-            "slideshow_image_id": slideshow_image_id,
-            "name": name,
-            "url": url,
-            "height": height,
-            "width": width,
-            "description": description
-        }
-
-        return self.api.put(
-            self.app, "update/slideshow/image", params=json.dumps(data))
-
-    def delete(self, slideshow_image_id):
-        data = {"slideshow_image_id": slideshow_image_id}
-
-        return self.api.delete(
-            self.app, "delete/slideshow/image", params=json.dumps(data))
+# class SlideShow(Resource):
+#     def create(self, community_id, name):
+#         data = {"community_id": community_id, "name": name}
+#
+#         return self.api.post(
+#             self.app, "create/slideshow", params=json.dumps(data))
+#
+#     def update(self, slideshow_id, name):
+#         data = {"slideshow_id": slideshow_id, "name": name}
+#
+#         return self.api.put(
+#             self.app, "update/slideshow", params=json.dumps(data))
+#
+#     def delete(self, slideshow_id):
+#         data = {"slideshow_id": slideshow_id}
+#
+#         return self.api.delete(
+#             self.app, "delete/slideshow", params=json.dumps(data))
+#
+#
+# class SlideShowImage(Resource):
+#     def create(self, slideshow_id, name, url, height, width, description):
+#         data = {
+#             "slideshow_id": slideshow_id,
+#             "name": name,
+#             "url": url,
+#             "height": height or None,
+#             "width": width or None,
+#             "description": description or ''
+#         }
+#
+#         return self.api.post(
+#             self.app, "create/slideshow/image", params=json.dumps(data))
+#
+#     def update(self, slideshow_image_id, name, url, height, width,
+#                description):
+#         data = {
+#             "slideshow_image_id": slideshow_image_id,
+#             "name": name,
+#             "url": url,
+#             "height": height,
+#             "width": width,
+#             "description": description
+#         }
+#
+#         return self.api.put(
+#             self.app, "update/slideshow/image", params=json.dumps(data))
+#
+#     def delete(self, slideshow_image_id):
+#         data = {"slideshow_image_id": slideshow_image_id}
+#
+#         return self.api.delete(
+#             self.app, "delete/slideshow/image", params=json.dumps(data))
