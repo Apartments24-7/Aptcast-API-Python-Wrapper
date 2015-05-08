@@ -10,16 +10,19 @@ class CorporationResource(Resource):
         self.action = self.base_action
         data = {
             "name": name,
-            "address0": address0,
-            "address1": address1,
-            "city": city,
-            "state": state,
-            "postal_code": postal_code,
-            "email": email,
-            "website": website,
-            "phone": phone
+            "contact": {
+                "email": email,
+                "website": website,
+                "phone": phone,
+                "address": {
+                    "address0": address0,
+                    "city": city,
+                    "state": state,
+                    "postal_code": postal_code
+                }
+            }
         }
-
+        import pdb;pdb.set_trace()
         return self.api.post(self.get_app(), self.get_action(), params=data)
 
     def update(self, aptcast_id, **kwargs):
