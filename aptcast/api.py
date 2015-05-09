@@ -19,10 +19,13 @@ class AptcastApi(object):
         else:
             return "http://localhost:8080"
 
-    def _set_headers(self, headers=None):
+    def _set_headers(self, headers=None, files=None):
         headers = headers or {}
         headers["Authorization"] = self.api_key
-        headers["Content-Type"] = "application/json"
+        if files:
+            headers["Content-Type"] = "form/multipart"
+        else:
+            headers["Content-Type"] = "application/json"
 
         if self.corporation_id is not None:
             headers["X-Corporation-Id"] = self.corporation_id
@@ -38,15 +41,12 @@ class AptcastApi(object):
 
     def post(self, app, action, params=None, files=None, headers=None,
              refresh_token=None):
-        headers = self._set_headers(headers)
+        headers = self._set_headers(headers, files)
         response = requests.post(
             join_url(self.api_host, self.api_base_path, app, action),
-            data=json.dumps(params) or {},
+            data=json.dumps(params) or {}, files=files or {},
             headers=headers)
-        try:
-            return response.json()
-        except:
-            import pdb;pdb.set_trace()
+        return response.json()
 
     def put(self, app, action, params=None, headers=None, refresh_token=None):
         headers = self._set_headers(headers)

@@ -1,6 +1,8 @@
 import json
+import requests
 
 from api import Resource
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 
 class CommunityResource(Resource):
@@ -113,28 +115,40 @@ class FloorPlanResource(Resource):
     def create(self, community_aptcast_id, beds, baths, name, is_loft,
                is_studio, description, image, image_description, rent_low,
                rent_high, deposit_low, deposit_high, square_feet_low,
-               square_feet_hight):
+               square_feet_high):
         self.action = "{0}/{1}".format(community_aptcast_id, self.base_action)
 
+        description_dict = None
+        if description:
+            description_dict = {
+                "body": description
+            }
+
         data = {
+            "name": name,
             "beds": beds,
             "baths": baths,
-            "name": name,
-            "is_loft": is_loft or False,
-            "is_studio": is_studio or False,
-            "description": description or None,
-            "image_description": image_description or None,
-            "rent_low": rent_low,
-            "rent_high": rent_high or None,
-            "deposit_low": deposit_low,
-            "deposit_high": deposit_high or None,
-            "square_feet_low": square_feet_low,
-            "square_feet_hight": square_feet_hight or None
+            "description": description_dict,
+            "rent": {
+                "low": rent_low,
+                "high": rent_high
+            },
+            "deposit": {
+                "low": deposit_low,
+                "high": deposit_high
+            },
+            "square_feet": {
+                "low": square_feet_low,
+                "high": square_feet_high
+            },
+            "is_loft": is_loft,
+            "is_studio": is_studio
         }
 
         files = {}
         if image:
-            files.update({"image": image})
+            response = requests.get(image)
+            files = {"image": response.raw}
 
         return self.api.post(
             self.get_app(), self.get_action(), params=data, files=files)
@@ -163,21 +177,33 @@ class UnitResource(Resource):
 
     def create(self, floor_plan_aptcast_id, number, building, floor,
                available_date, description, rent_low, rent_high, deposit_low,
-               deposit_high, square_feet_low, square_feet_hight):
+               deposit_high, square_feet_low, square_feet_high):
         self.action = "{0}/{1}".format(floor_plan_aptcast_id, self.base_action)
 
+        description_dict = None
+        if description:
+            description_dict = {
+                "body": description
+            }
+
         data = {
-            "number": number or None,
-            "building": building or None,
-            "floor": floor or None,
-            "available_date": available_date or None,
-            "description": description or None,
-            "rent_low": rent_low,
-            "rent_high": rent_high or None,
-            "deposit_low": deposit_low or None,
-            "deposit_high": deposit_high or None,
-            "square_feet_low": square_feet_low,
-            "square_feet_hight": square_feet_hight or None
+            "number": number,
+            "building": building,
+            "floor": floor,
+            "available_date": available_date,
+            "description": description_dict,
+            "rent": {
+                "low": rent_low,
+                "high": rent_high
+            },
+            "deposit": {
+                "low": deposit_low,
+                "high": deposit_high
+            },
+            "square_feet": {
+                "low": square_feet_low,
+                "high": square_feet_high
+            }
         }
 
         return self.api.post(self.get_app(), self.get_action(), params=data)
@@ -260,7 +286,7 @@ class LogoImage(CommunityResource):
 
 class FloorPlan(CommunityResource):
     def create(self, community_id, name, beds, baths, description, image_url,
-               price_low, price_high, deposit_low, deposit_high,
+               price_low, price_high, deposit_low, deposit_high, sqft_low, sqft_high,
                image_height=None, image_width=None):
 
         data = {
@@ -274,13 +300,17 @@ class FloorPlan(CommunityResource):
                 "height": image_height,
                 "width": image_width,
             },
-            "price": {
+            "rent": {
                 "low": price_low,
                 "high": price_high
             },
             "deposit": {
                 "low": deposit_low,
                 "high": deposit_high
+            },
+            "square_feet": {
+                "low": sqft_low,
+                "high": sqft_high
             }
         }
 
@@ -288,7 +318,7 @@ class FloorPlan(CommunityResource):
             self.app, "create/floorplan", params=json.dumps(data))
 
     def update(self, floorplan_id, name, beds, baths, description, image_url,
-               price_low, price_high, deposit_low, deposit_high,
+               price_low, price_high, deposit_low, deposit_high, sqft_low, sqft_high,
                image_height=None, image_width=None):
 
         data = {
@@ -302,13 +332,17 @@ class FloorPlan(CommunityResource):
                 "height": image_height,
                 "width": image_width,
             },
-            "price": {
+            "rent": {
                 "low": price_low,
                 "high": price_high
             },
             "deposit": {
                 "low": deposit_low,
                 "high": deposit_high
+            },
+            "square_feet": {
+                "low": sqft_low,
+                "high": sqft_high
             }
         }
 
@@ -417,8 +451,10 @@ class SlideshowImageResource(Resource):
             "name": name or None,
             "description": description or None
         }
-        files = {"image": image}
 
+        response = requests.get(image)
+        import pdb;pdb.set_trace()
+        files = {"image": response.content}
         return self.api.post(
             self.get_app(), self.get_action(), params=data, files=files)
 
