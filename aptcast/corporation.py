@@ -16,13 +16,13 @@ class CorporationResource(Resource):
                 "phone": phone,
                 "address": {
                     "address0": address0,
+                    "address1": address1,
                     "city": city,
                     "state": state,
                     "postal_code": postal_code
                 }
             }
         }
-        import pdb;pdb.set_trace()
         return self.api.post(self.get_app(), self.get_action(), params=data)
 
     def update(self, aptcast_id, **kwargs):
