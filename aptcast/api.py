@@ -23,7 +23,7 @@ class AptcastApi(object):
         headers = headers or {}
         headers["Authorization"] = self.api_key
         if files:
-            headers["Content-Type"] = "form/multipart"
+            headers["Content-Type"] = "multipart/form-data"
         else:
             headers["Content-Type"] = "application/json"
 

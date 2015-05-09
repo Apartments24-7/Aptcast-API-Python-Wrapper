@@ -3,7 +3,7 @@ import requests
 
 from api import Resource
 from django.core.files.uploadedfile import SimpleUploadedFile
-
+from io import BytesIO
 
 class CommunityResource(Resource):
     app = "community"
@@ -148,7 +148,7 @@ class FloorPlanResource(Resource):
         files = {}
         if image:
             response = requests.get(image)
-            files = {"image": response.raw}
+            files = {"image": BytesIO(response.content)}
 
         return self.api.post(
             self.get_app(), self.get_action(), params=data, files=files)
