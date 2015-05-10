@@ -2,18 +2,18 @@ import json
 import requests
 
 from api import Resource
-from django.core.files.uploadedfile import SimpleUploadedFile
 from io import BytesIO
+
 
 class CommunityResource(Resource):
     app = "community"
     base_action = "communities"
 
-    def create(self, name, lat, lng, address0, address1, city, state, postal_code, email,
-               website, phone, pet_policy_details, dogs, cats, senior,
-               section8, student, corporate, military, corporation,
-               description, location, logo_description, hero_shot_description,
-               logo, hero_shot):
+    def create(self, name, lat, lng, address0, address1, city, state,
+               postal_code, email, website, phone, pet_policy_details, dogs,
+               cats, senior, section8, student, corporate, military,
+               corporation, description, location, logo_description,
+               hero_shot_description, logo, hero_shot):
         self.action = self.base_action
 
         data = {
@@ -149,6 +149,7 @@ class FloorPlanResource(Resource):
         if image:
             response = requests.get(image)
             files = {"image": BytesIO(response.content)}
+        files = {}  # Ignore files for the moment.
 
         return self.api.post(
             self.get_app(), self.get_action(), params=data, files=files)
@@ -221,20 +222,20 @@ class UnitResource(Resource):
         return self.api.delete(self.get_app(), self.get_action())
 
 
-class HeroShot(CommunityResource):
+class HeroShotResource(Resource):
     app = "community"
 
-    def create(self, community_id, url, width=None, height=None):
-        data = {
-            "community_id": community_id,
-            "url": url,
-            "width": width,
-            "height": height
-        }
+    def create(self, community_id, image, width=None, height=None):
 
-        return self.api.post(
-            self.app, "{0}/hero_shot".format(
-                community_id), params=json.dumps(data))
+        if image:
+            response = requests.get(image)
+            files = {"image": BytesIO(response.content)}
+        else:
+            return {}
+
+        return self.api.post_multipart(
+            self.app, "{0}/hero-shot".format(
+                community_id), files=files)
 
     def update(self, community_id, url, width=None, height=None):
         data = {
@@ -282,79 +283,6 @@ class LogoImage(CommunityResource):
 
         return self.api.delete(
             self.app, "delete/logo", params=json.dumps(data))
-
-
-class FloorPlan(CommunityResource):
-    def create(self, community_id, name, beds, baths, description, image_url,
-               price_low, price_high, deposit_low, deposit_high, sqft_low, sqft_high,
-               image_height=None, image_width=None):
-
-        data = {
-            "community_id": community_id,
-            "name": name,
-            "beds": beds,
-            "baths": baths,
-            "description": description,
-            "image": {
-                "url": image_url,
-                "height": image_height,
-                "width": image_width,
-            },
-            "rent": {
-                "low": price_low,
-                "high": price_high
-            },
-            "deposit": {
-                "low": deposit_low,
-                "high": deposit_high
-            },
-            "square_feet": {
-                "low": sqft_low,
-                "high": sqft_high
-            }
-        }
-
-        return self.api.post(
-            self.app, "create/floorplan", params=json.dumps(data))
-
-    def update(self, floorplan_id, name, beds, baths, description, image_url,
-               price_low, price_high, deposit_low, deposit_high, sqft_low, sqft_high,
-               image_height=None, image_width=None):
-
-        data = {
-            "floorplan_id": floorplan_id,
-            "name": name,
-            "beds": beds,
-            "baths": baths,
-            "description": description,
-            "image": {
-                "url": image_url,
-                "height": image_height,
-                "width": image_width,
-            },
-            "rent": {
-                "low": price_low,
-                "high": price_high
-            },
-            "deposit": {
-                "low": deposit_low,
-                "high": deposit_high
-            },
-            "square_feet": {
-                "low": sqft_low,
-                "high": sqft_high
-            }
-        }
-
-        return self.api.put(
-            self.app, "update/floorplan", params=json.dumps(data))
-
-    def delete(self, floorplan_id):
-        data = {"floorplan_id": floorplan_id}
-
-        return self.api.delete(
-            self.app, "delete/floorplan", params=json.dumps(data))
-
 
 class Unit(CommunityResource):
     def build(self, community_id, floorplan_id, number, price_low, price_high,
