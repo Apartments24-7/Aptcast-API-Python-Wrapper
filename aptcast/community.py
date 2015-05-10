@@ -13,7 +13,7 @@ class CommunityResource(Resource):
                postal_code, email, website, phone, pet_policy_details, dogs,
                cats, senior, section8, student, corporate, military,
                corporation, description, location, logo_description,
-               hero_shot_description, logo, hero_shot):
+               hero_shot_description):
         self.action = self.base_action
 
         data = {
@@ -43,18 +43,14 @@ class CommunityResource(Resource):
         }
 
         files = {}
-        if any([logo, hero_shot]):
-            if logo:
-                files.update({"logo": logo})
-            if hero_shot:
-                files.update({"hero_shot": hero_shot})
-
         return self.api.post(
             self.get_app(), self.get_action(), params=data, files=files)
 
-    def update(self, aptcast_id, name, description, lat, lng, address, city,
-               state, postal_code, email, website, phone, cats, dogs,
-               pet_policy):
+    def update(self, aptcast_id, name, lat, lng, address0, address1, city,
+               state, postal_code, email, website, phone, pet_policy_details,
+               dogs, cats, senior, section8, student, corporate, military,
+               corporation, description, location, logo_description,
+               hero_shot_description):
         data = {
             "community_id": aptcast_id,
             "description": {"body": description},
@@ -68,7 +64,8 @@ class CommunityResource(Resource):
                 "website": website,
                 "phone": phone,
                 "address": {
-                    "address0": address,
+                    "address0": address0,
+                    "address1": address1,
                     "city": city,
                     "state": state,
                     "postal_code": postal_code,
@@ -77,10 +74,11 @@ class CommunityResource(Resource):
             "pet_policy": {
                 "cats": cats,
                 "dogs": dogs,
-                "details": pet_policy or ""
+                "details": pet_policy_details or ""
             }
         }
 
+        # Fix the below.
         return self.api.put(self.app, "update", params=json.dumps(data))
 
 
@@ -225,10 +223,10 @@ class UnitResource(Resource):
 class HeroShotResource(Resource):
     app = "community"
 
-    def create(self, community_id, image, width=None, height=None):
+    def create(self, community_id, image_url, width=None, height=None):
 
-        if image:
-            response = requests.get(image)
+        if image_url:
+            response = requests.get(image_url)
             files = {"image": BytesIO(response.content)}
         else:
             return {}
@@ -255,17 +253,19 @@ class HeroShotResource(Resource):
             self.app, "delete/hero_shot", params=json.dumps(data))
 
 
-class LogoImage(CommunityResource):
-    def create(self, community_id, url, width=None, height=None):
-        data = {
-            "community_id": community_id,
-            "url": url,
-            "width": width,
-            "height": height
-        }
+class LogoImageResource(Resource):
+    app = "community"
 
-        return self.api.post(
-            self.app, "create/logo", params=json.dumps(data))
+    def create(self, community_id, image_url, width=None, height=None):
+
+        if image_url:
+            response = requests.get(image_url)
+            files = {"image": BytesIO(response.content)}
+        else:
+            return {}
+
+        return self.api.post_multipart(self.app, "{0}/logo".format(
+            community_id), files=files)
 
     def update(self, community_id, url, width=None, height=None):
         data = {
@@ -283,63 +283,6 @@ class LogoImage(CommunityResource):
 
         return self.api.delete(
             self.app, "delete/logo", params=json.dumps(data))
-
-class Unit(CommunityResource):
-    def build(self, community_id, floorplan_id, number, price_low, price_high,
-              deposit_low, deposit_high, description="", building="",
-              floor="", available_date=None):
-
-        return {
-            "community_id": community_id,
-            "floorplan_id": floorplan_id,
-            "number": number,
-            "building": building,
-            "floor": floor,
-            "available_date": available_date,
-            "description": description,
-            "price": {
-                "low": price_low,
-                "high": price_high
-            },
-            "deposit": {
-                "low": deposit_low,
-                "high": deposit_high
-            }
-        }
-
-    def create(self, community_id, floorplan_id, number, price_low, price_high,
-               deposit_low, deposit_high, description="", building="",
-               floor="", available_date=None):
-
-        data = self.build(
-            community_id, floorplan_id, number, price_low, price_high,
-            deposit_low, deposit_high, description, building, floor,
-            available_date)
-
-        return self.api.post(self.app, "create/unit", params=json.dumps(data))
-
-    def update(self, community_id, floorplan_id, number, price_low, price_high,
-               deposit_low, deposit_high, description="", building="",
-               floor="", available_date=None):
-
-        data = self.build(
-            community_id, floorplan_id, number, price_low, price_high,
-            deposit_low, deposit_high, description, building, floor,
-            available_date)
-
-        return self.api.put(self.app, "update/unit", params=json.dumps(data))
-
-    def bulk_create(self, units):
-        return self.api.post(
-            self.app,
-            "bulk-create/unit",
-            params=json.dumps(units))
-
-    def delete(self, unit_id):
-        data = {"unit_id": unit_id}
-
-        return self.api.delete(
-            self.app, "delete/unit", params=json.dumps(data))
 
 
 class SlideshowResource(Resource):
@@ -381,9 +324,9 @@ class SlideshowImageResource(Resource):
         }
 
         response = requests.get(image)
-        import pdb;pdb.set_trace()
+
         files = {"image": response.content}
-        return self.api.post(
+        return self.api.post_multipart(
             self.get_app(), self.get_action(), params=data, files=files)
 
     def update(self, slideshow_aptcast_id, aptcast_id, **kwargs):
