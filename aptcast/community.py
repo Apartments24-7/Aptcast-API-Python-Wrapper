@@ -149,22 +149,13 @@ class FloorPlanResource(Resource):
             "is_studio": is_studio
         }
 
-        files = {}
-        if image:
-            response = requests.get(image)
-            files = {"image": BytesIO(response.content)}
-        files = {}  # Ignore files for the moment.
-
-        return self.api.post_multipart(
-            self.get_app(), self.get_action(), params=data, files=files)
+        return self.api.post(
+            self.get_app(), self.get_action(), params=data)
 
     def update(self, community_aptcast_id, aptcast_id, **kwargs):
         self.action = "{0}/{1}/{2}".format(
             community_aptcast_id, self.base_action, aptcast_id)
         files = {}
-
-        if kwargs.get("image"):
-            files.update({"image": kwargs.pop("image")})
 
         return self.api.patch(
             self.get_app(), self.get_action(), params=kwargs, files=files)
