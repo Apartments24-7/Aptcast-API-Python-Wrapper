@@ -114,10 +114,10 @@ class CommunityAmenityResource(Resource):
 
 class FloorPlanResource(Resource):
     app = "community"
-    base_action = "floor-plans"
+    base_action = "floor-plan"
 
     def create(self, community_aptcast_id, beds, baths, name, is_loft,
-               is_studio, description, image, image_description, rent_low,
+               is_studio, description, rent_low,
                rent_high, deposit_low, deposit_high, square_feet_low,
                square_feet_high):
         self.action = "{0}/{1}".format(community_aptcast_id, self.base_action)
@@ -165,6 +165,45 @@ class FloorPlanResource(Resource):
             community_aptcast_id, self.base_action, aptcast_id)
 
         return self.api.delete(self.get_app(), self.get_action())
+
+
+class FloorPlanImageResource(Resource):
+    app = "community"
+    base_action = "floor-plan"
+
+    def create(self, floorplan_aptcast_id, image_url, width=None, height=None):
+        self.action = "{0}/{1}".format(self.base_action, floorplan_aptcast_id)
+        if image_url:
+            response = requests.get(image_url)
+            files = {
+                "image": (
+                    image_url.split("/")[-1],
+                    BytesIO(response.content),
+                    response.headers.get('content-type', "")
+                )
+            }
+        else:
+            return {}
+
+        return self.api.post_multipart(self.app, "{0}/image".format(
+            self.action), files=files)
+
+    def update(self, community_id, url, width=None, height=None):
+        data = {
+            "community_id": community_id,
+            "url": url,
+            "width": width,
+            "height": height
+        }
+
+        return self.api.put(
+            self.app, "update/logo", params=json.dumps(data))
+
+    def delete(self, community_id):
+        data = {"community_id": community_id}
+
+        return self.api.delete(
+            self.app, "delete/logo", params=json.dumps(data))
 
 
 class UnitResource(Resource):
@@ -224,7 +263,13 @@ class HeroShotResource(Resource):
 
         if image_url:
             response = requests.get(image_url)
-            files = {"image": BytesIO(response.content)}
+            files = {
+                "image": (
+                    image_url.split("/")[-1],
+                    BytesIO(response.content),
+                    response.headers.get('content-type', "")
+                )
+            }
         else:
             return {}
 
@@ -257,7 +302,13 @@ class LogoImageResource(Resource):
 
         if image_url:
             response = requests.get(image_url)
-            files = {"image": BytesIO(response.content)}
+            files = {
+                "image": (
+                    image_url.split("/")[-1],
+                    BytesIO(response.content),
+                    response.headers.get('content-type', "")
+                )
+            }
         else:
             return {}
 
@@ -311,7 +362,7 @@ class SlideshowImageResource(Resource):
     base_action = "slideshow"
     extra_action = "images"
 
-    def create(self, slideshow_aptcast_id, name, description, image):
+    def create(self, slideshow_aptcast_id, name, description, image_url):
         self.action = "{0}/{1}/{2}".format(
             self.base_action, slideshow_aptcast_id, self.extra_action)
 
@@ -320,9 +371,16 @@ class SlideshowImageResource(Resource):
             "description": description or None
         }
 
-        response = requests.get(image)
+        response = requests.get(image_url)
 
-        files = {"image": response.content}
+        files = {
+            "image": (
+                image_url.split("/")[-1],
+                BytesIO(response.content),
+                response.headers.get('content-type', "")
+            )
+        }
+
         return self.api.post_multipart(
             self.get_app(), self.get_action(), params=data, files=files)
 
