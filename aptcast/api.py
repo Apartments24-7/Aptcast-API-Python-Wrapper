@@ -59,10 +59,12 @@ class AptcastApi(object):
 
     def put(self, app, action, params=None, headers=None, refresh_token=None):
         headers = self._set_headers(headers)
+        headers["Content-Type"] = "application/json"
 
-        return requests.put(join_url(
+        response = requests.put(join_url(
             self.api_host, self.api_base_path, app,
-            action), data=params or {}, headers=headers).json()
+            action), data=json.dumps(params) or {}, headers=headers)
+        return response.json()
 
     def patch(self, app, action, params=None, files=None, headers=None,
               refresh_token=None):

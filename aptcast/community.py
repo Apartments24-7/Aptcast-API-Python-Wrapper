@@ -51,6 +51,8 @@ class CommunityResource(Resource):
                dogs, cats, senior, section8, student, corporate, military,
                corporation, description, location, logo_description,
                hero_shot_description):
+        self.action = "{0}/{1}".format(self.base_action, aptcast_id)
+
         data = {
             "community_id": aptcast_id,
             "description": {"body": description},
@@ -78,8 +80,12 @@ class CommunityResource(Resource):
             }
         }
 
-        # Fix the below.
-        return self.api.put(self.app, "update", params=json.dumps(data))
+        return self.api.put(
+            self.get_app(), self.get_action(), params=data)
+
+    def delete(self, aptcast_id):
+        self.action = "{0}/{1}".format(self.base_action, aptcast_id)
+        return self.api.delete(self.get_app(), self.get_action())
 
 
 class CommunityAmenityResource(Resource):
@@ -149,7 +155,7 @@ class FloorPlanResource(Resource):
             files = {"image": BytesIO(response.content)}
         files = {}  # Ignore files for the moment.
 
-        return self.api.post(
+        return self.api.post_multipart(
             self.get_app(), self.get_action(), params=data, files=files)
 
     def update(self, community_aptcast_id, aptcast_id, **kwargs):
