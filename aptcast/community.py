@@ -77,7 +77,6 @@ class CommunityResource(Resource):
                 "details": pet_policy_details or ""
             }
         }
-
         return self.api.put(
             self.get_app(), self.get_action(), params=data)
 
