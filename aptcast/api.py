@@ -66,6 +66,14 @@ class AptcastApi(object):
             action), data=json.dumps(params) or {}, headers=headers)
         return response.json()
 
+    def put_multipart(self, app, action, params=None, headers=None, files=None, refresh_token=None):
+        headers = self._set_headers(headers)
+
+        response = requests.put(join_url(
+            self.api_host, self.api_base_path, app,
+            action), data=json.dumps(params) or {}, files=files or {}, headers=headers)
+        return response.json()
+
     def patch(self, app, action, params=None, files=None, headers=None,
               refresh_token=None):
         headers = self._set_headers(headers)

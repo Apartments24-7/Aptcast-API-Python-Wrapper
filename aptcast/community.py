@@ -149,13 +149,42 @@ class FloorPlanResource(Resource):
         return self.api.post(
             self.get_app(), self.get_action(), params=data)
 
-    def update(self, community_aptcast_id, aptcast_id, **kwargs):
+    def update(self, community_aptcast_id, aptcast_id, beds, baths, name,
+               is_loft, is_studio, description, rent_low, rent_high,
+               deposit_low, deposit_high, square_feet_low, square_feet_high):
+
+        description_dict = None
+        if description:
+            description_dict = {
+                "body": description
+            }
+
+        data = {
+            "name": name,
+            "beds": beds,
+            "baths": baths,
+            "description": description_dict,
+            "rent": {
+                "low": rent_low,
+                "high": rent_high
+            },
+            "deposit": {
+                "low": deposit_low,
+                "high": deposit_high
+            },
+            "square_feet": {
+                "low": square_feet_low,
+                "high": square_feet_high
+            },
+            "is_loft": is_loft,
+            "is_studio": is_studio
+        }
+
         self.action = "{0}/{1}/{2}".format(
             community_aptcast_id, self.base_action, aptcast_id)
-        files = {}
 
-        return self.api.patch(
-            self.get_app(), self.get_action(), params=kwargs, files=files)
+        return self.api.put(
+            self.get_app(), self.get_action(), params=data)
 
     def delete(self, community_aptcast_id, aptcast_id):
         self.action = "{0}/{1}/{2}".format(
@@ -176,7 +205,7 @@ class FloorPlanImageResource(Resource):
                 "image": (
                     image_url.split("/")[-1],
                     BytesIO(response.content),
-                    response.headers.get('content-type', "")
+                    response.headers.get("content-type", "")
                 )
             }
         else:
@@ -185,16 +214,22 @@ class FloorPlanImageResource(Resource):
         return self.api.post_multipart(self.app, "{0}/image".format(
             self.action), files=files)
 
-    def update(self, community_id, url, width=None, height=None):
-        data = {
-            "community_id": community_id,
-            "url": url,
-            "width": width,
-            "height": height
-        }
+    def update(self, floorplan_aptcast_id, image_url, width=None, height=None):
+        self.action = "{0}/{1}".format(self.base_action, floorplan_aptcast_id)
+        if image_url:
+            response = requests.get(image_url, timeout=10)
+            files = {
+                "image": (
+                    image_url.split("/")[-1],
+                    BytesIO(response.content),
+                    response.headers.get("content-type", "")
+                )
+            }
+        else:
+            return {}
 
-        return self.api.put(
-            self.app, "update/logo", params=json.dumps(data))
+        return self.api.put_multipart(
+            self.app, "{0}/image".format(self.action), files=files)
 
     def delete(self, community_id):
         data = {"community_id": community_id}
@@ -240,11 +275,40 @@ class UnitResource(Resource):
 
         return self.api.post(self.get_app(), self.get_action(), params=data)
 
-    def update(self, floor_plan_aptcast_id, aptcast_id, **kwargs):
-        self.action = "{0}/{1}/{2}".format(
-            floor_plan_aptcast_id, self.base_action, aptcast_id)
+    def update(self, floor_plan_aptcast_id, unit_aptcast_id, number, building,
+               floor, available_date, description, rent_low, rent_high,
+               deposit_low, deposit_high, square_feet_low, square_feet_high):
 
-        return self.api.patch(self.get_app(), self.get_action(), params=kwargs)
+        self.action = "{0}/{1}/{2}".format(
+            floor_plan_aptcast_id, self.base_action, unit_aptcast_id)
+
+        description_dict = None
+        if description:
+            description_dict = {
+                "body": description
+            }
+
+        data = {
+            "number": number,
+            "building": building,
+            "floor": floor,
+            "available_date": available_date,
+            "description": description_dict,
+            "rent": {
+                "low": rent_low,
+                "high": rent_high
+            },
+            "deposit": {
+                "low": deposit_low,
+                "high": deposit_high
+            },
+            "square_feet": {
+                "low": square_feet_low,
+                "high": square_feet_high
+            }
+        }
+
+        return self.api.put(self.get_app(), self.get_action(), params=data)
 
     def delete(self, floor_plan_aptcast_id, aptcast_id):
         self.action = "{0}/{1}/{2}".format(
