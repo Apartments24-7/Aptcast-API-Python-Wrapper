@@ -214,28 +214,11 @@ class FloorPlanImageResource(Resource):
         return self.api.post_multipart(self.app, "{0}/image".format(
             self.action), files=files)
 
-    def update(self, floorplan_aptcast_id, image_url, width=None, height=None):
+    def delete(self, floorplan_aptcast_id):
         self.action = "{0}/{1}".format(self.base_action, floorplan_aptcast_id)
-        if image_url:
-            response = requests.get(image_url, timeout=10)
-            files = {
-                "image": (
-                    image_url.split("/")[-1],
-                    BytesIO(response.content),
-                    response.headers.get("content-type", "")
-                )
-            }
-        else:
-            return {}
-
-        return self.api.put_multipart(
-            self.app, "{0}/image".format(self.action), files=files)
-
-    def delete(self, community_id):
-        data = {"community_id": community_id}
 
         return self.api.delete(
-            self.app, "delete/logo", params=json.dumps(data))
+            self.app, "{0}/image".format(self.action))
 
 
 class UnitResource(Resource):
@@ -338,22 +321,9 @@ class HeroShotResource(Resource):
             self.app, "{0}/hero-shot".format(
                 community_id), files=files)
 
-    def update(self, community_id, url, width=None, height=None):
-        data = {
-            "community_id": community_id,
-            "url": url,
-            "width": width,
-            "height": height
-        }
-
-        return self.api.put(
-            self.app, "update/hero_shot", params=json.dumps(data))
-
     def delete(self, community_id):
-        data = {"community_id": community_id}
-
         return self.api.delete(
-            self.app, "delete/hero_shot", params=json.dumps(data))
+            self.app, "{0}/hero-shot".format(community_id))
 
 
 class LogoImageResource(Resource):
@@ -376,22 +346,9 @@ class LogoImageResource(Resource):
         return self.api.post_multipart(self.app, "{0}/logo".format(
             community_id), files=files)
 
-    def update(self, community_id, url, width=None, height=None):
-        data = {
-            "community_id": community_id,
-            "url": url,
-            "width": width,
-            "height": height
-        }
-
-        return self.api.put(
-            self.app, "update/logo", params=json.dumps(data))
-
     def delete(self, community_id):
-        data = {"community_id": community_id}
-
         return self.api.delete(
-            self.app, "delete/logo", params=json.dumps(data))
+            self.app, "{0}/logo".format(community_id))
 
 
 class SlideshowResource(Resource):
