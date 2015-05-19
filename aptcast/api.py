@@ -15,7 +15,7 @@ class AptcastApi(object):
 
     def default_api_host(self):
         if self.mode == "live":
-            return "https://api.aptcast.com"
+            return "https://aptcast.com"
         else:
             return "http://localhost:8080"
 

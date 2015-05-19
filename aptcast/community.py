@@ -311,7 +311,7 @@ class HeroShotResource(Resource):
                 "image": (
                     image_url.split("/")[-1],
                     BytesIO(response.content),
-                    response.headers.get('content-type', "")
+                    response.headers.get("content-type", "")
                 )
             }
         else:
@@ -337,7 +337,7 @@ class LogoImageResource(Resource):
                 "image": (
                     image_url.split("/")[-1],
                     BytesIO(response.content),
-                    response.headers.get('content-type', "")
+                    response.headers.get("content-type", "")
                 )
             }
         else:
@@ -395,7 +395,7 @@ class SlideshowImageResource(Resource):
             "image": (
                 image_url.split("/")[-1],
                 BytesIO(response.content),
-                response.headers.get('content-type', "")
+                response.headers.get("content-type", "")
             )
         }
 
