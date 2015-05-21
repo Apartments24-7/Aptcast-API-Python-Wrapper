@@ -12,7 +12,7 @@ class CommunityResource(Resource):
     def create(self, name, lat, lng, address0, address1, city, state,
                postal_code, email, website, phone, pet_policy_details, dogs,
                cats, senior, section8, student, corporate, military,
-               corporation, description, location, logo_description,
+               corporation, description, logo_description,
                hero_shot_description):
         self.action = self.base_action
 
@@ -48,7 +48,7 @@ class CommunityResource(Resource):
     def update(self, aptcast_id, name, lat, lng, address0, address1, city,
                state, postal_code, email, website, phone, pet_policy_details,
                dogs, cats, senior, section8, student, corporate, military,
-               corporation, description, location, logo_description,
+               corporation, description, logo_description,
                hero_shot_description):
         self.action = "{0}/{1}".format(self.base_action, aptcast_id)
 
