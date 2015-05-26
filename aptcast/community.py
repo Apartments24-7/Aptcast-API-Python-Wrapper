@@ -59,8 +59,6 @@ class CommunityResource(Resource):
             corporate: <boolean>,
             military: <boolean>
         """
-        self.action = self.base_action
-
         data = {
             "name": name,
             "location": {
@@ -83,6 +81,7 @@ class CommunityResource(Resource):
         return data
 
     def create(self, *args, **kwargs):
+        self.action = self.base_action
         data = self.build_community(*args, **kwargs)
         return self.api.post(
             self.get_app(), self.get_action(), params=data)
