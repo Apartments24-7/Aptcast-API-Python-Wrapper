@@ -185,14 +185,18 @@ class FloorPlanImageResource(Resource):
     def create(self, floorplan_aptcast_id, image_url, width=None, height=None):
         self.action = "{0}/{1}".format(self.base_action, floorplan_aptcast_id)
         if image_url:
-            response = requests.get(image_url, timeout=10)
-            files = {
-                "image": (
-                    image_url.split("/")[-1],
-                    BytesIO(response.content),
-                    response.headers.get("content-type", "")
-                )
-            }
+            try:
+                response = requests.get(image_url, timeout=10)
+                files = {
+                    "image": (
+                        image_url.split("/")[-1],
+                        BytesIO(response.content),
+                        response.headers.get("content-type", "")
+                    )
+                }
+            except Exception as err:
+                print str(err)
+                return {}
         else:
             return {}
 
@@ -267,14 +271,18 @@ class HeroShotResource(Resource):
     def create(self, community_id, image_url, width=None, height=None):
 
         if image_url:
-            response = requests.get(image_url, timeout=10)
-            files = {
-                "image": (
-                    image_url.split("/")[-1],
-                    BytesIO(response.content),
-                    response.headers.get("content-type", "")
-                )
-            }
+            try:
+                response = requests.get(image_url, timeout=10)
+                files = {
+                    "image": (
+                        image_url.split("/")[-1],
+                        BytesIO(response.content),
+                        response.headers.get("content-type", "")
+                    )
+                }
+            except Exception as err:
+                print str(err)
+                return {}
         else:
             return {}
 
@@ -293,14 +301,18 @@ class LogoImageResource(Resource):
     def create(self, community_id, image_url, width=None, height=None):
 
         if image_url:
-            response = requests.get(image_url, timeout=10)
-            files = {
-                "image": (
-                    image_url.split("/")[-1],
-                    BytesIO(response.content),
-                    response.headers.get("content-type", "")
-                )
-            }
+            try:
+                response = requests.get(image_url, timeout=10)
+                files = {
+                    "image": (
+                        image_url.split("/")[-1],
+                        BytesIO(response.content),
+                        response.headers.get("content-type", "")
+                    )
+                }
+            except Exception as err:
+                print str(err)
+                return {}
         else:
             return {}
 
@@ -350,15 +362,18 @@ class SlideshowImageResource(Resource):
             "description": description or None
         }
 
-        response = requests.get(image_url, timeout=10)
-
-        files = {
-            "image": (
-                image_url.split("/")[-1],
-                BytesIO(response.content),
-                response.headers.get("content-type", "")
-            )
-        }
+        try:
+            response = requests.get(image_url, timeout=10)
+            files = {
+                "image": (
+                    image_url.split("/")[-1],
+                    BytesIO(response.content),
+                    response.headers.get("content-type", "")
+                )
+            }
+        except Exception as err:
+            print str(err)
+            return {}
 
         return self.api.post_multipart(
             self.get_app(), self.get_action(), params=data, files=files)
