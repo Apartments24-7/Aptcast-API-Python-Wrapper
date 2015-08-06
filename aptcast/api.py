@@ -48,6 +48,7 @@ class AptcastApi(object):
             return response.json()
         except JSONDecodeError:
             print response.content
+            raise
 
     def post_multipart(self, app, action, params=None, files=None,
                        headers=None, refresh_token=None):
