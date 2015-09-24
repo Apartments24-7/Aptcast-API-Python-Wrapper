@@ -46,7 +46,7 @@ class AptcastApi(object):
             headers=headers)
         try:
             return response.json()
-        except JSONDecodeError:
+        except ValueError:
             print response.content
             raise
 
